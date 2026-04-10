@@ -10,3 +10,12 @@ class Document(Base):
     id = Column(UUID, primary_key=True, default=uuid.uuid4)
     filename = Column(String)
     content = Column(Text)
+
+from pypdf import PdfReader
+
+def extract_text(file_path: str):
+    reader = PdfReader(file_path)
+    text = ""
+    for page in reader.pages:
+        text += page.extract_text() or ""
+    return text
