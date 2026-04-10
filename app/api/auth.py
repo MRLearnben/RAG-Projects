@@ -1,8 +1,16 @@
-from fastapi import FastAPI
-from app.api import auth, documents, chat
+from fastapi import APIRouter
+from app.core.security import hash_password, create_token
 
-app = FastAPI()
+router = APIRouter()
 
-app.include_router(auth.router, prefix="/auth")
-app.include_router(documents.router, prefix="/documents")
-app.include_router(chat.router, prefix="/chat")
+users = {}
+
+@router.post("/register")
+def register(email: str, password: str):
+    users[email] = hash_password(password)
+    return {"msg": "registered"}
+
+@router.post("/login")
+def login(email: str, password: str):
+    token = create_token({"sub": email})
+    return {"token": token}
